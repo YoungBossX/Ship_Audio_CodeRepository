@@ -10,7 +10,7 @@ def parse_args():
     """解析命令行参数"""
     parser = argparse.ArgumentParser(description='船舶辐射噪声频谱图特征提取')
     parser.add_argument('--input_dir', type=str, default="D:\数据集\shipsEar_AUDIOS", help='输入音频文件目录')
-    parser.add_argument('--output_dir', type=str, default="D:\数据集\特征可视化\ShipEar", help='输出特征保存目录')
+    parser.add_argument('--output_dir', type=str, default="D:\数据集\特征可视化\ShipEar\spectrogram", help='输出特征保存目录')
     parser.add_argument('--sample_rate', type=int, default=44100, help='采样率')
     parser.add_argument('--n_fft', type=int, default=1024, help='FFT大小')
     parser.add_argument('--hop_length', type=int, default=512, help='帧移')
