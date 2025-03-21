@@ -18,10 +18,8 @@ def extract_mel_spectrogram_librosa(audio_path, n_fft, hop_length, n_mels, sr):
         y=y, sr=sr, n_fft=n_fft, hop_length=hop_length, n_mels=n_mels
     )
     
-    # 转换为分贝单位
-    mel_spectrogram_db = librosa.power_to_db(mel_spectrogram, ref=np.max)
-    
-    return mel_spectrogram_db, sr
+    # 不再转换为分贝单位，直接返回原始梅尔谱
+    return mel_spectrogram, sr
 
 def extract_mel_spectrogram_pytorch(audio_path, n_fft, hop_length, n_mels, sr, device):
     """使用PyTorch提取梅尔谱特征"""
@@ -48,13 +46,10 @@ def extract_mel_spectrogram_pytorch(audio_path, n_fft, hop_length, n_mels, sr, d
     # 提取梅尔谱
     mel_spectrogram = mel_transform(y_tensor)
     
-    # 转换为分贝单位
-    mel_spectrogram_db = torchaudio.transforms.AmplitudeToDB()(mel_spectrogram)
-    
     # 转回CPU并转为numpy数组
-    mel_spectrogram_db = mel_spectrogram_db.squeeze().cpu().numpy()
+    mel_spectrogram = mel_spectrogram.squeeze().cpu().numpy()
     
-    return mel_spectrogram_db, sr
+    return mel_spectrogram, sr
 
 def plot_mel_spectrogram(mel_spectrogram, sr, hop_length, output_path):
     """绘制并保存梅尔谱图像"""
@@ -66,8 +61,8 @@ def plot_mel_spectrogram(mel_spectrogram, sr, hop_length, output_path):
         x_axis='time',
         y_axis='mel'
     )
-    plt.colorbar(format='%+2.0f dB')
-    plt.title('Mel Spectrogram')
+    plt.colorbar(format='%+2.0f')  # 修改格式，不再使用dB单位
+    plt.title('Mel Spectrogram (Raw)')  # 修改标题，表明是原始梅尔谱
     plt.tight_layout()
     plt.savefig(output_path, dpi=300, bbox_inches='tight')
     plt.close()
@@ -85,7 +80,7 @@ def process_dataset(input_dir, output_dir, method, n_fft, hop_length, n_mels, sr
                 audio_files.append(os.path.join(root, file))
     
     # 使用tqdm显示进度
-    for audio_path in tqdm(audio_files, desc=f"使用{method}提取梅尔谱"):
+    for audio_path in tqdm(audio_files, desc=f"使用{method}提取原始梅尔谱"):
         # 创建相对路径结构
         rel_path = os.path.relpath(audio_path, input_dir)
         base_name = os.path.splitext(rel_path)[0]
@@ -112,7 +107,7 @@ def process_dataset(input_dir, output_dir, method, n_fft, hop_length, n_mels, sr
         np.save(np_output_path, mel_spectrogram)
 
 def main():
-    parser = argparse.ArgumentParser(description='从ShipEar数据集提取梅尔谱特征')
+    parser = argparse.ArgumentParser(description='从ShipEar数据集提取原始梅尔谱特征')
     parser.add_argument('--input_dir', type=str, required=True, help='ShipEar数据集的输入目录')
     parser.add_argument('--output_dir', type=str, required=True, help='梅尔谱输出目录')
     parser.add_argument('--method', type=str, choices=['librosa', 'pytorch'], default='librosa', 
@@ -126,7 +121,7 @@ def main():
     # 提供默认参数列表
     args = parser.parse_args([
         '--input_dir', 'D:\数据集\shipsEar_AUDIOS',
-        '--output_dir', 'mel_spectrum',
+        '--output_dir', 'raw_mel_spectrum',  # 修改输出目录名称
         '--method', 'pytorch',
         '--n_fft', '2048',
         '--hop_length', '512',
