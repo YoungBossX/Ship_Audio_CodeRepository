@@ -77,7 +77,7 @@ def main():
     
     # 检查CUDA是否可用
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    print(f"使用设备: {device}")
+    print(f"\n使用设备: {device}")
     
     # 创建输出目录
     os.makedirs(args.output_dir, exist_ok=True)
