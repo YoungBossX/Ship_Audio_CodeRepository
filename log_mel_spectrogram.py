@@ -108,8 +108,8 @@ def process_dataset(input_dir, output_dir, method, n_fft, hop_length, n_mels, sr
         plot_log_mel_spectrogram(log_mel_spectrogram, sr, hop_length, output_path)
         
         # 保存对数梅尔谱数据
-        np_output_path = os.path.join(output_dir, f"{base_name}.npy")
-        np.save(np_output_path, log_mel_spectrogram)
+        # np_output_path = os.path.join(output_dir, f"{base_name}.npy")
+        # np.save(np_output_path, log_mel_spectrogram)
 
 def main():
     parser = argparse.ArgumentParser(description='从ShipEar数据集提取对数梅尔谱特征')
@@ -125,8 +125,8 @@ def main():
     
     # 提供默认参数列表
     args = parser.parse_args([
-        '--input_dir', 'D:\数据集\shipsEar_AUDIOS',
-        '--output_dir', 'log_mel_spectrum',
+        '--input_dir', r'E:\数据集\ShipEar\shipsEar_AUDIOS',
+        '--output_dir',r'E:\数据集\ShipEar\Visual_Features\log_mel_spectrum',
         '--method', 'pytorch',
         '--n_fft', '2048',
         '--hop_length', '512',

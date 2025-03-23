@@ -6,17 +6,6 @@ import matplotlib.pyplot as plt
 from tqdm import tqdm
 from pathlib import Path
 
-def parse_args():
-    """解析命令行参数"""
-    parser = argparse.ArgumentParser(description='船舶辐射噪声频谱图特征提取')
-    parser.add_argument('--input_dir', type=str, default="D:\数据集\shipsEar_AUDIOS", help='输入音频文件目录')
-    parser.add_argument('--output_dir', type=str, default="D:\数据集\特征可视化\ShipEar\spectrogram", help='输出特征保存目录')
-    parser.add_argument('--sample_rate', type=int, default=44100, help='采样率')
-    parser.add_argument('--n_fft', type=int, default=1024, help='FFT大小')
-    parser.add_argument('--hop_length', type=int, default=512, help='帧移')
-    parser.add_argument('--save_plots', action='store_false', help='是否保存频谱图可视化结果')
-    return parser.parse_args()
-
 def extract_features(audio_path, args, device):
     """提取音频特征"""
     # 加载音频并立即移至指定设备
@@ -70,6 +59,17 @@ def save_features(features, output_path, save_plots):
         plt.tight_layout()
         plt.savefig(os.path.join(output_path, f"{features['file_name']}_spec.png"))
         plt.close()
+
+def parse_args():
+    """解析命令行参数"""
+    parser = argparse.ArgumentParser(description='船舶辐射噪声频谱图特征提取')
+    parser.add_argument('--input_dir', type=str, default=r'E:\数据集\ShipEar\shipsEar_AUDIOS', help='输入音频文件目录')
+    parser.add_argument('--output_dir', type=str, default=r'E:\数据集\ShipEar\Visual_Features\spectrogram', help='输出特征保存目录')
+    parser.add_argument('--sample_rate', type=int, default=44100, help='采样率')
+    parser.add_argument('--n_fft', type=int, default=1024, help='FFT大小')
+    parser.add_argument('--hop_length', type=int, default=512, help='帧移')
+    parser.add_argument('--save_plots', action='store_false', help='是否保存频谱图可视化结果')
+    return parser.parse_args()
 
 def main():
     """主函数"""

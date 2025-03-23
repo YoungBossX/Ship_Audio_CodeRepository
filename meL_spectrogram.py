@@ -101,10 +101,8 @@ def process_dataset(input_dir, output_dir, method, n_fft, hop_length, n_mels, sr
         
         # 保存梅尔谱图像
         plot_mel_spectrogram(mel_spectrogram, sr, hop_length, output_path)
-        
-        # 可选：保存梅尔谱数据
-        np_output_path = os.path.join(output_dir, f"{base_name}.npy")
-        np.save(np_output_path, mel_spectrogram)
+        # 保存对数梅尔谱数据
+        # np.save(output_path.replace('.png', '.npy'), mel_spectrogram)
 
 def main():
     parser = argparse.ArgumentParser(description='从ShipEar数据集提取原始梅尔谱特征')
@@ -120,8 +118,8 @@ def main():
     
     # 提供默认参数列表
     args = parser.parse_args([
-        '--input_dir', 'D:\数据集\shipsEar_AUDIOS',
-        '--output_dir', 'raw_mel_spectrum',  # 修改输出目录名称
+        '--input_dir', r'E:\数据集\ShipEar\shipsEar_AUDIOS',
+        '--output_dir', r'E:\数据集\ShipEar\Visual_Features\raw_mel_spectrum',  # 修改输出目录名称
         '--method', 'pytorch',
         '--n_fft', '2048',
         '--hop_length', '512',
