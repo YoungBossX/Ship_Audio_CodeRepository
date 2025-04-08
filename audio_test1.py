@@ -74,7 +74,6 @@ print(f"sampling_rate: {sampling_rate_2}")
 
 # 静音消除（中间部分）
 
-
 # 频谱图
 # dft_input = array[:]
 # # 计算DFT
