@@ -20,7 +20,7 @@ plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 # print(f"array_1 shape: {array_1.shape}") # (6644996,)
 # print(f"sampling_rate: {sampling_rate_1}") # 22050
 
-array_2, sampling_rate_2 = librosa.load(r"D:\数据集\shipsEar_AUDIOS\30__19_07_13_practico2.wav", sr=16000)
+array_2, sampling_rate_2 = librosa.load(r"E:\数据集\ShipEar\shipsEar_AUDIOS\30__19_07_13_practico2.wav", sr=16000)
 print(f"array_2: {array_2}")
 print(f"array_2 shape: {array_2.shape}")
 print(f"sampling_rate: {sampling_rate_2}")
@@ -61,18 +61,21 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 静音消除（前后部分）
-# array_trim, index = librosa.effects.trim(array_2)
-# fig, ax = plt.subplots(2, 1, constrained_layout=True)
-# librosa.display.waveshow(array_2, sr=sampling_rate_2, ax=ax[0])
-# librosa.display.waveshow(array_trim, sr=sampling_rate_2, ax=ax[1])
-# plt.title("Waveform with Silence Trimming")
-# ax[0].set_xlabel("Time")
-# ax[1].set_xlabel("Time")
-# ax[0].set_ylabel("Amplitude")
-# ax[1].set_ylabel("Amplitude")
-# plt.show()
+array_trim, index = librosa.effects.trim(array_2, top_db=60)
+fig, ax = plt.subplots(2, 1, constrained_layout=True)
+librosa.display.waveshow(array_2, sr=sampling_rate_2, ax=ax[0])
+ax[0].vlines(index[0] / sampling_rate_2, -0.5, 0.5, colors='r')
+ax[0].vlines(index[1] / sampling_rate_2, -0.5, 0.5, colors='r')
+librosa.display.waveshow(array_trim, sr=sampling_rate_2, ax=ax[1])
+fig.suptitle("Waveform with Silence Trimming")
+ax[0].set_xlabel("Time")
+ax[1].set_xlabel("Time")
+ax[0].set_ylabel("Amplitude")
+ax[1].set_ylabel("Amplitude")
+plt.show()
 
 # 静音消除（中间部分）
+
 
 # 频谱图
 # dft_input = array[:]
