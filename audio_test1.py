@@ -11,6 +11,8 @@
 
 import librosa
 import matplotlib.pyplot as plt
+import numpy as np
+from matplotlib.pyplot import figure
 
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
 plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
@@ -20,7 +22,7 @@ plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 # print(f"array_1 shape: {array_1.shape}") # (6644996,)
 # print(f"sampling_rate: {sampling_rate_1}") # 22050
 
-array_2, sampling_rate_2 = librosa.load(r"E:\数据集\ShipEar\shipsEar_AUDIOS\30__19_07_13_practico2.wav", sr=16000)
+array_2, sampling_rate_2 = librosa.load(r"E:\数据集\ShipEar\shipsEar_AUDIOS\10__10_07_13_marDeOnza_Sale.wav", sr=16000)
 print(f"array_2: {array_2}")
 print(f"array_2 shape: {array_2.shape}")
 print(f"sampling_rate: {sampling_rate_2}")
@@ -61,21 +63,108 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 静音消除（前后部分）
-array_trim, index = librosa.effects.trim(array_2, top_db=60)
-fig, ax = plt.subplots(2, 1, constrained_layout=True)
-librosa.display.waveshow(array_2, sr=sampling_rate_2, ax=ax[0])
-ax[0].vlines(index[0] / sampling_rate_2, -0.5, 0.5, colors='r')
-ax[0].vlines(index[1] / sampling_rate_2, -0.5, 0.5, colors='r')
-librosa.display.waveshow(array_trim, sr=sampling_rate_2, ax=ax[1])
-fig.suptitle("Waveform with Silence Trimming")
-ax[0].set_xlabel("Time")
-ax[1].set_xlabel("Time")
-ax[0].set_ylabel("Amplitude")
-ax[1].set_ylabel("Amplitude")
-plt.show()
+# array_trim, index = librosa.effects.trim(array_2, top_db=30)
+# fig, ax = plt.subplots(2, 1, constrained_layout=True)
+# librosa.display.waveshow(array_2, sr=sampling_rate_2, ax=ax[0])
+# ax[0].vlines(index[0] / sampling_rate_2, -0.5, 0.5, colors='r')
+# ax[0].vlines(index[1] / sampling_rate_2, -0.5, 0.5, colors='r')
+# librosa.display.waveshow(array_trim, sr=sampling_rate_2, ax=ax[1])
+# fig.suptitle("Waveform with Silence Trimming")
+# ax[0].set_xlabel("Time")
+# ax[1].set_xlabel("Time")
+# ax[0].set_ylabel("Amplitude")
+# ax[1].set_ylabel("Amplitude")
+# plt.show()
 
 # 静音消除（中间部分）
+# intervals = librosa.effects.split(array_2, top_db=30)
+# print("intervals:", intervals)
+# array_remix = librosa.effects.remix(array_2, intervals=intervals)
+# fig, ax = plt.subplots(2, 1, sharex=True, sharey=True, constrained_layout=True)
+# librosa.display.waveshow(array_2, sr=sampling_rate_2, ax=ax[0])
+# librosa.display.waveshow(array_remix, sr=sampling_rate_2, ax=ax[1], offset=intervals[0][0]/sampling_rate_2)
+# for interval in intervals:
+#     ax[0].vlines(interval[0] / sampling_rate_2, -0.5, 0.5, colors='r')
+#     ax[0].vlines(interval[1] / sampling_rate_2, -0.5, 0.5, colors='r')
+# ax[0].set_xlabel("Time")
+# ax[1].set_xlabel("Time")
+# ax[0].set_ylabel("Amplitude")
+# ax[1].set_ylabel("Amplitude")
+# plt.show()
 
+# 频域表示：STFT
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# S = np.abs(librosa.stft(array_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
+# print(f'array_2 length: {len(array_2)}')
+# print(f'S : {S.shape}') # (D,N)=(n_fft/2+1, len(array_2)/hop_length)
+# fig  = plt.figure()
+# librosa.display.specshow(
+#     S,
+#     sr=sampling_rate_2,
+#     hop_length=hop_length,
+#     x_axis='time',
+#     y_axis='hz',
+#     cmap='hot'
+# )
+# # plt.imshow(S, origin='lower', cmap='hot')
+# plt.title('Spectrogram')
+# plt.xlabel('Time')
+# plt.ylabel('Frequency (Hz)')
+# plt.colorbar(format='%+2.0f')
+# plt.tight_layout()
+# plt.show()
+
+# 清楚的观察高频信息，让数值的动态范围更广
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# S = np.abs(librosa.stft(array_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
+# S_dB = librosa.amplitude_to_db(S, ref=np.max)
+# D, N = S.shape
+# range_D = np.arange(0, D, D / 10)
+# range_N = np.arange(0, N, N / 10)
+# range_t = range_N * (hop_length / sampling_rate_2 / 1000) # 时间轴
+# range_f = range_D * (sampling_rate_2 / n_fft / 1000) # 频率轴（kHz）
+# fig  = plt.figure()
+# plt.xticks(range_N, [f"{t:.1f}" for t in range_t])
+# plt.yticks(range_D, [f"{f:.1f}" for f in range_f])
+# print('S shape:', S.shape)
+# plt.imshow(S, origin='lower', cmap='hot', aspect='auto')
+# plt.colorbar(format='%+2.0f dB')
+# plt.xlabel('Time (s)')
+# plt.ylabel('Frequency (kHz)')
+# plt.title('Logarithmic Spectrogram')
+# plt.tight_layout()
+# plt.show()
+
+# 使用librosa的specshow函数替代imshow以获得更好的频谱图显示
+frame = 25 # 帧长
+hop_length = 10 # 帧移
+win_length = int(frame * sampling_rate_2 / 1000)
+hop_length = int(hop_length * sampling_rate_2 / 1000)
+n_fft = int(2 ** np.ceil(np.log2(win_length)))
+S = np.abs(librosa.stft(array_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
+S_dB = librosa.amplitude_to_db(S, ref=np.max)
+librosa.display.specshow(
+    S_dB,
+    sr=sampling_rate_2,
+    hop_length=hop_length,
+    x_axis='time',
+    y_axis='hz',
+    cmap='hot'  # 使用更清晰的颜色映射
+)
+plt.colorbar(format='%+2.0f dB')
+plt.xlabel('Time (s)')
+plt.ylabel('Frequency (kHz)')
+plt.title('Logarithmic Spectrogram')
+plt.tight_layout()
+plt.show()
 
 # 频谱图
 # dft_input = array[:]
