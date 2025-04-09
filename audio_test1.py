@@ -92,6 +92,19 @@ print(f"sampling_rate: {sampling_rate_2}")
 # ax[1].set_ylabel("Amplitude")
 # plt.show()
 
+# 预加重波形图
+# array_preemp = librosa.effects.preemphasis(array_2)
+# fig, ax = plt.subplots(2, 1, constrained_layout=True)
+# librosa.display.waveshow(array_2, sr=sampling_rate_2, ax=ax[0])
+# librosa.display.waveshow(array_preemp, sr=sampling_rate_2, ax=ax[1])
+# ax[0].set_title("Original Waveform")
+# ax[1].set_title("Pre-emphasized Waveform")
+# ax[0].set_xlabel("Time")
+# ax[1].set_xlabel("Time")
+# ax[0].set_ylabel("Amplitude")
+# ax[1].set_ylabel("Amplitude")
+# plt.show()
+
 # 频域表示：STFT
 # frame = 25 # 帧长
 # hop_length = 10 # 帧移
@@ -144,26 +157,44 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 使用librosa的specshow函数替代imshow以获得更好的频谱图显示
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# S = np.abs(librosa.stft(array_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length)) # librosa.stft()函数的输出是复数形式，通常希望得到的频谱是实数值，代表信号的幅度信息
+# S_dB = librosa.amplitude_to_db(S, ref=np.max)
+# librosa.display.specshow(
+#     S_dB,
+#     sr=sampling_rate_2,
+#     hop_length=hop_length,
+#     x_axis='time',
+#     y_axis='hz',
+#     cmap='hot'  # 使用更清晰的颜色映射
+# )
+# plt.colorbar(format='%+2.0f dB')
+# plt.title('Logarithmic Spectrogram')
+# plt.tight_layout()
+# plt.show()
+
+# 预加重频谱图
 frame = 25 # 帧长
 hop_length = 10 # 帧移
 win_length = int(frame * sampling_rate_2 / 1000)
 hop_length = int(hop_length * sampling_rate_2 / 1000)
 n_fft = int(2 ** np.ceil(np.log2(win_length)))
+array_preemp = librosa.effects.preemphasis(array_2)
 S = np.abs(librosa.stft(array_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
-S_dB = librosa.amplitude_to_db(S, ref=np.max)
-librosa.display.specshow(
-    S_dB,
-    sr=sampling_rate_2,
-    hop_length=hop_length,
-    x_axis='time',
-    y_axis='hz',
-    cmap='hot'  # 使用更清晰的颜色映射
-)
-plt.colorbar(format='%+2.0f dB')
-plt.xlabel('Time (s)')
-plt.ylabel('Frequency (kHz)')
-plt.title('Logarithmic Spectrogram')
-plt.tight_layout()
+S = librosa.amplitude_to_db(S, ref=np.max)
+S_preemp = np.abs(librosa.stft(array_preemp, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
+S_preemp = librosa.amplitude_to_db(S_preemp, ref=np.max)
+fig, ax = plt.subplots(2, 1, constrained_layout=True)
+img_1 = librosa.display.specshow(S, sr=sampling_rate_2, hop_length=hop_length, x_axis='time', y_axis='hz', cmap='hot', ax=ax[0])
+img_2 = librosa.display.specshow(S_preemp, sr=sampling_rate_2, hop_length=hop_length, x_axis='time', y_axis='hz', cmap='hot', ax=ax[1])
+ax[0].set_title("Original Spectrogram")
+ax[1].set_title("Pre-emphasized Spectrogram")
+plt.colorbar(img_1, format='%+2.0f dB')
+plt.colorbar(img_2, format='%+2.0f dB')
 plt.show()
 
 # 频谱图
