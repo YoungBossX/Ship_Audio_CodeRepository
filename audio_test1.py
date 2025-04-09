@@ -12,7 +12,6 @@
 import librosa
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib.pyplot import figure
 
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
 plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
@@ -178,23 +177,79 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 预加重频谱图
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# array_preemp = librosa.effects.preemphasis(array_2)
+# S = np.abs(librosa.stft(array_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
+# S = librosa.amplitude_to_db(S, ref=np.max)
+# S_preemp = np.abs(librosa.stft(array_preemp, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
+# S_preemp = librosa.amplitude_to_db(S_preemp, ref=np.max)
+# fig, ax = plt.subplots(2, 1, constrained_layout=True)
+# img_1 = librosa.display.specshow(S, sr=sampling_rate_2, hop_length=hop_length, x_axis='time', y_axis='hz', cmap='hot', ax=ax[0])
+# img_2 = librosa.display.specshow(S_preemp, sr=sampling_rate_2, hop_length=hop_length, x_axis='time', y_axis='hz', cmap='hot', ax=ax[1])
+# ax[0].set_title("Original Spectrogram")
+# ax[1].set_title("Pre-emphasized Spectrogram")
+# plt.colorbar(img_1, format='%+2.0f dB')
+# plt.colorbar(img_2, format='%+2.0f dB')
+# plt.show()
+
+# 梅尔滤波器组
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# n_mels = 128
+# mel_basis = librosa.filters.mel(sr=sampling_rate_2, n_fft=n_fft, n_mels=n_mels)
+# print(f"mel_basis shape: {mel_basis.shape}") # 梅尔滤波器组矩阵的形状，通常为(n_mels, n_fft//2 + 1)
+# x = np.arange(mel_basis.shape[1]) * sampling_rate_2 / n_fft
+# plt.plot(x, mel_basis.T)
+# plt.title("Mel Filter Bank")
+# plt.xlabel("Frequency (Hz)")
+# plt.ylabel("Mel Filter Coefficients")
+# plt.show()
+
+# Fbank特征
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# n_mels = 128
+# fig = plt.figure()
+# fbank = librosa.feature.melspectrogram(y=array_2, sr=sampling_rate_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length, n_mels=n_mels)
+# print(f"f_bank shape: {fbank.shape}") # (n_mels, n_frames)
+# fbank_dB = librosa.power_to_db(fbank, ref=np.max)
+# img = librosa.display.specshow(fbank_dB, sr=sampling_rate_2, hop_length=hop_length, x_axis='time', y_axis='mel', cmap='hot', fmax=sampling_rate_2/2)
+# fig.colorbar(img, format='%+2.0f dB')
+# plt.title("Mel—Frequency Spectrogram")
+# plt.show()
+
+# MFCC特征
 frame = 25 # 帧长
 hop_length = 10 # 帧移
 win_length = int(frame * sampling_rate_2 / 1000)
 hop_length = int(hop_length * sampling_rate_2 / 1000)
 n_fft = int(2 ** np.ceil(np.log2(win_length)))
-array_preemp = librosa.effects.preemphasis(array_2)
-S = np.abs(librosa.stft(array_2, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
-S = librosa.amplitude_to_db(S, ref=np.max)
-S_preemp = np.abs(librosa.stft(array_preemp, n_fft=n_fft, hop_length=hop_length, win_length=win_length))
-S_preemp = librosa.amplitude_to_db(S_preemp, ref=np.max)
-fig, ax = plt.subplots(2, 1, constrained_layout=True)
-img_1 = librosa.display.specshow(S, sr=sampling_rate_2, hop_length=hop_length, x_axis='time', y_axis='hz', cmap='hot', ax=ax[0])
-img_2 = librosa.display.specshow(S_preemp, sr=sampling_rate_2, hop_length=hop_length, x_axis='time', y_axis='hz', cmap='hot', ax=ax[1])
-ax[0].set_title("Original Spectrogram")
-ax[1].set_title("Pre-emphasized Spectrogram")
-plt.colorbar(img_1, format='%+2.0f dB')
-plt.colorbar(img_2, format='%+2.0f dB')
+n_mels = 128
+n_mfcc = 20
+mfcc_1 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=1)
+mfcc_2 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=2)
+mfcc_3 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=3)
+fig, ax = plt.subplots(3, 1, sharex=True, sharey=True, constrained_layout=True)
+img_1 = librosa.display.specshow(mfcc_1, x_axis='time', ax=ax[0])
+img_2 = librosa.display.specshow(mfcc_2, x_axis='time', ax=ax[1])
+img_3 = librosa.display.specshow(mfcc_3, x_axis='time', ax=ax[2])
+ax[0].set_title("MFCC with DCT Type 1")
+ax[1].set_title("MFCC with DCT Type 2")
+ax[2].set_title("MFCC with DCT Type 3")
+fig.colorbar(img_1, ax=ax[0])
+fig.colorbar(img_2, ax=ax[1])
+fig.colorbar(img_3, ax=ax[2])
+plt.title('MFCC')
 plt.show()
 
 # 频谱图
