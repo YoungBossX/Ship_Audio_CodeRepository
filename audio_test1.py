@@ -229,6 +229,30 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # MFCC特征
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# n_mels = 128
+# n_mfcc = 20
+# mfcc_1 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=1)
+# mfcc_2 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=2)
+# mfcc_3 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=3)
+# fig, ax = plt.subplots(3, 1, sharex=True, sharey=True, constrained_layout=True)
+# img_1 = librosa.display.specshow(mfcc_1, x_axis='time', ax=ax[0])
+# img_2 = librosa.display.specshow(mfcc_2, x_axis='time', ax=ax[1])
+# img_3 = librosa.display.specshow(mfcc_3, x_axis='time', ax=ax[2])
+# ax[0].set_title("MFCC with DCT Type 1")
+# ax[1].set_title("MFCC with DCT Type 2")
+# ax[2].set_title("MFCC with DCT Type 3")
+# fig.colorbar(img_1, ax=ax[0])
+# fig.colorbar(img_2, ax=ax[1])
+# fig.colorbar(img_3, ax=ax[2])
+# plt.title('MFCC')
+# plt.show()
+
+# 特征拼接与差分
 frame = 25 # 帧长
 hop_length = 10 # 帧移
 win_length = int(frame * sampling_rate_2 / 1000)
@@ -236,20 +260,17 @@ hop_length = int(hop_length * sampling_rate_2 / 1000)
 n_fft = int(2 ** np.ceil(np.log2(win_length)))
 n_mels = 128
 n_mfcc = 20
-mfcc_1 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=1)
-mfcc_2 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=2)
-mfcc_3 = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length, dct_type=3)
-fig, ax = plt.subplots(3, 1, sharex=True, sharey=True, constrained_layout=True)
-img_1 = librosa.display.specshow(mfcc_1, x_axis='time', ax=ax[0])
-img_2 = librosa.display.specshow(mfcc_2, x_axis='time', ax=ax[1])
-img_3 = librosa.display.specshow(mfcc_3, x_axis='time', ax=ax[2])
-ax[0].set_title("MFCC with DCT Type 1")
-ax[1].set_title("MFCC with DCT Type 2")
-ax[2].set_title("MFCC with DCT Type 3")
-fig.colorbar(img_1, ax=ax[0])
-fig.colorbar(img_2, ax=ax[1])
-fig.colorbar(img_3, ax=ax[2])
-plt.title('MFCC')
+mfcc = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length)
+mfcc_delta = librosa.feature.delta(mfcc)
+mfcc_delta_delta = librosa.feature.delta(mfcc, order=2)
+print(f"mfcc shape: {mfcc.shape}")
+print(f"mfcc_delta shape: {mfcc_delta.shape}")
+print(f"mfcc_delta_delta shape: {mfcc_delta_delta.shape}")
+mfcc_d1_d2 = np.concatenate((mfcc, mfcc_delta, mfcc_delta_delta), axis=0)
+fig = plt.figure()
+img = librosa.display.specshow(mfcc_d1_d2, x_axis='time')
+fig.colorbar(img)
+plt.title('MFCC with Delta and Delta-Delta')
 plt.show()
 
 # 频谱图
