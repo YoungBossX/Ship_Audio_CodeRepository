@@ -16,7 +16,7 @@ import numpy as np
 plt.rcParams['font.sans-serif'] = ['SimHei']  # 使用黑体
 plt.rcParams['axes.unicode_minus'] = False  # 解决负号显示问题
 
-# array_1, sampling_rate_1 = librosa.load(r"D:\数据集\shipsEar_AUDIOS\30__19_07_13_practico2.wav")
+# array_1, sampling_rate_1 = librosa.load(r"E:\数据集\ShipEar\shipsEar_AUDIOS\10__10_07_13_marDeOnza_Sale.wav")
 # print(f"array_1: {array_1}")
 # print(f"array_1 shape: {array_1.shape}") # (6644996,)
 # print(f"sampling_rate: {sampling_rate_1}") # 22050
@@ -26,7 +26,7 @@ print(f"array_2: {array_2}")
 print(f"array_2 shape: {array_2.shape}")
 print(f"sampling_rate: {sampling_rate_2}")
 
-# array_3, sampling_rate_3 = librosa.load(r"D:\数据集\shipsEar_AUDIOS\30__19_07_13_practico2.wav", offset=20, duration=5)
+# array_3, sampling_rate_3 = librosa.load(r"E:\数据集\ShipEar\shipsEar_AUDIOS\10__10_07_13_marDeOnza_Sale.wav", offset=20, duration=5)
 # print(f"array_3: {array_3}")
 # print(f"array_3 shape: {array_3.shape}")
 # print(f"sampling_rate: {sampling_rate_3}")
@@ -62,7 +62,7 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 静音消除（前后部分）
-# array_trim, index = librosa.effects.trim(array_2, top_db=30)
+# array_trim, index = librosa.effects.trim(array_2, top_db=20)
 # fig, ax = plt.subplots(2, 1, constrained_layout=True)
 # librosa.display.waveshow(array_2, sr=sampling_rate_2, ax=ax[0])
 # ax[0].vlines(index[0] / sampling_rate_2, -0.5, 0.5, colors='r')
@@ -76,7 +76,7 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 静音消除（中间部分）
-# intervals = librosa.effects.split(array_2, top_db=30)
+# intervals = librosa.effects.split(array_2, top_db=20)
 # print("intervals:", intervals)
 # array_remix = librosa.effects.remix(array_2, intervals=intervals)
 # fig, ax = plt.subplots(2, 1, sharex=True, sharey=True, constrained_layout=True)
@@ -253,25 +253,25 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 特征拼接与差分
-frame = 25 # 帧长
-hop_length = 10 # 帧移
-win_length = int(frame * sampling_rate_2 / 1000)
-hop_length = int(hop_length * sampling_rate_2 / 1000)
-n_fft = int(2 ** np.ceil(np.log2(win_length)))
-n_mels = 128
-n_mfcc = 20
-mfcc = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length)
-mfcc_delta = librosa.feature.delta(mfcc)
-mfcc_delta_delta = librosa.feature.delta(mfcc, order=2)
-print(f"mfcc shape: {mfcc.shape}")
-print(f"mfcc_delta shape: {mfcc_delta.shape}")
-print(f"mfcc_delta_delta shape: {mfcc_delta_delta.shape}")
-mfcc_d1_d2 = np.concatenate((mfcc, mfcc_delta, mfcc_delta_delta), axis=0)
-fig = plt.figure()
-img = librosa.display.specshow(mfcc_d1_d2, x_axis='time')
-fig.colorbar(img)
-plt.title('MFCC with Delta and Delta-Delta')
-plt.show()
+# frame = 25 # 帧长
+# hop_length = 10 # 帧移
+# win_length = int(frame * sampling_rate_2 / 1000)
+# hop_length = int(hop_length * sampling_rate_2 / 1000)
+# n_fft = int(2 ** np.ceil(np.log2(win_length)))
+# n_mels = 128
+# n_mfcc = 20
+# mfcc = librosa.feature.mfcc(y=array_2, sr=sampling_rate_2, n_mfcc=n_mfcc, n_fft=n_fft, n_mels=n_mels, hop_length=hop_length, win_length=win_length)
+# mfcc_delta = librosa.feature.delta(mfcc)
+# mfcc_delta_delta = librosa.feature.delta(mfcc, order=2)
+# print(f"mfcc shape: {mfcc.shape}")
+# print(f"mfcc_delta shape: {mfcc_delta.shape}")
+# print(f"mfcc_delta_delta shape: {mfcc_delta_delta.shape}")
+# mfcc_d1_d2 = np.concatenate((mfcc, mfcc_delta, mfcc_delta_delta), axis=0)
+# fig = plt.figure()
+# img = librosa.display.specshow(mfcc_d1_d2, x_axis='time')
+# fig.colorbar(img)
+# plt.title('MFCC with Delta and Delta-Delta')
+# plt.show()
 
 # 频谱图
 # dft_input = array[:]
