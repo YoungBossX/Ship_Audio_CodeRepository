@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 '''
 @Project ：Git_Clone 
-@File    ：wav.Tools.py
+@File    ：wavTools.py
 @IDE     ：PyCharm 
 @Author  ：XCC
 @Date    ：2025/4/14 10:26 
