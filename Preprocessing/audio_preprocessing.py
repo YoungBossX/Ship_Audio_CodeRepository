@@ -2,7 +2,7 @@
 # -*- coding: UTF-8 -*-
 '''
 @Project ：Git_Clone 
-@File    ：audio_test1.py.py
+@File    ：audio_preprocessing.py
 @IDE     ：PyCharm 
 @Author  ：XCC
 @Date    ：2025/4/5 13:08 
