@@ -154,7 +154,8 @@ def wav_waveform(wave_path):
     sample_time = 1 / f  # 采样点的时间间隔
     time = a / f  # 声音信号的长度
     sample_frequency, audio_sequence = wavfile.read(wave_path)
-    print(f'audio_sequence: {audio_sequence}')  # 声音信号每一帧的“大小”
+    # print(f'audio_sequence: {audio_sequence}')  # 声音信号每一帧的“大小”
+    # print(audio_sequence.dtype) # int32
     x_seq = np.arange(0, time, sample_time)
 
     plt.plot(x_seq, audio_sequence, 'blue')
