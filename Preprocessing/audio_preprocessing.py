@@ -31,7 +31,7 @@ print(f"sampling_rate: {sampling_rate_2}")
 # print(f"array_3 shape: {array_3.shape}")
 # print(f"sampling_rate: {sampling_rate_3}")
 
-# # 波形显示
+# 波形显示
 # fig_1 = plt.figure(1)
 # y = array_2
 # x = np.arange(len(y)) / sampling_rate_2
@@ -249,7 +249,6 @@ print(f"sampling_rate: {sampling_rate_2}")
 # fig.colorbar(img_1, ax=ax[0])
 # fig.colorbar(img_2, ax=ax[1])
 # fig.colorbar(img_3, ax=ax[2])
-# plt.title('MFCC')
 # plt.show()
 
 # 特征拼接与差分
