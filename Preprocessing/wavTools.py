@@ -205,4 +205,4 @@ if __name__ == '__main__':
     # pcm_to_wav(pcm_path, wav_path2)
 
     # 音频对应的波形图
-    wav_waveform(wav_path)
+    # wav_waveform(wav_path)

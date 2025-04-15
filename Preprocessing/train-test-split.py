@@ -43,7 +43,7 @@ def rename_files_with_labels(audio_dir, label_file, output_dir):
             file_id = int(audio_file.split('__')[0])
 
             # 在标注数据中查找对应的标签
-            label_row = labels_df[labels_df['id'] == file_id]
+            label_row = labels_df[labels_df['ids'] == file_id]
 
             if not label_row.empty:
                 # 获取标签
@@ -74,7 +74,7 @@ def rename_files_with_labels(audio_dir, label_file, output_dir):
             print(f"错误: 无法处理文件 {audio_file} - {str(e)}")
             not_found_count += 1
 
-    print(f"\n处理完成!")
+    print(f"处理完成!")
     print(f"已重命名: {renamed_count} 个文件")
     print(f"未找到标签: {not_found_count} 个文件")
 
@@ -108,20 +108,21 @@ def class12_split(wavs):
             test_files.append(wav)
         else:
             print(wav, ' is excluded!')
-        return train_files, test_files
+    return train_files, test_files
 
 if __name__ == '__main__':
-    # wavs_path = 'D:\数据集\ShipEar'
-    # wavs = os.listdir(wavs_path)
-
+    ###################### 文件重命名处理 ######################
     # audio_directory = r"D:\数据集\ShipEar"
     # labels_file = r"D:\数据集\ShipEar\meta_info.txt"
     # output_directory = r"D:\数据集\ShipEar-Class"
     # rename_files_with_labels(audio_directory, labels_file, output_directory)
 
+    wavs_path = 'D:\数据集\ShipEar-Rename'
+    wavs = os.listdir(wavs_path)
+
     ###################### 9-class train-test-split ######################
     # train9_files, test9_files = class9_split(wavs)
-    # out9_path = 'D:\数据集\ShipEar\shipsear_with_split-9class'
+    # out9_path = 'D:\数据集\ShipEar-train-test-split\shipsear_with_split-9class'
     # if not os.path.exists(out9_path):
     #     os.makedirs(os.path.join(out9_path,'train'))
     #     os.makedirs(os.path.join(out9_path,'test'))
@@ -131,25 +132,27 @@ if __name__ == '__main__':
     #     shutil.copy(os.path.join(wavs_path,x), os.path.join(out9_path,'test',x))
 
     ###################### 12-class train-test-split ######################
-    # train12_files, test12_files = class12_split(wavs)
-    # out12_path = 'D:\数据集\ShipEar\shipsear_with_split-12class'
-    # if not os.path.exists(out12_path):
-    #     os.makedirs(os.path.join(out12_path,'train'))
-    #     os.makedirs(os.path.join(out12_path,'test'))
-    # for x in train12_files:
-    #     shutil.copy(os.path.join(wavs_path,x), os.path.join(out12_path,'train',x))
-    # for x in test12_files:
-    #     shutil.copy(os.path.join(wavs_path,x), os.path.join(out12_path,'test',x))
-    #
-    # # Cut clips for Trawler_28
-    # name = 'Trawler_28__19_07_13_NuevoRiaAldan.wav'
-    # waveform, sample_rate = torchaudio.load(os.path.join(wavs_path,name))
-    # duration = waveform.size(1) / sample_rate
-    # start_time = 125
-    #
-    # part1 = waveform[:, 15 * sample_rate:start_time * sample_rate]
-    # part2 = waveform[:, start_time * sample_rate:]
-    #
-    # # Save as WAV file
-    # torchaudio.save(os.path.join(out12_path,'train',name.replace('.wav','_train.wav')), part1, sample_rate, bits_per_sample=16)
-    # torchaudio.save(os.path.join(out12_path,'test',name.replace('.wav','_test.wav')), part2, sample_rate, bits_per_sample=16)
+    train12_files, test12_files = class12_split(wavs)
+    out12_path = 'D:\数据集\ShipEar-train-test-split\shipsear_with_split-12class'
+    if not os.path.exists(out12_path):
+        os.makedirs(os.path.join(out12_path,'train'), exist_ok=True)
+        os.makedirs(os.path.join(out12_path,'test'), exist_ok=True)
+    for x in train12_files:
+        shutil.copy(os.path.join(wavs_path,x), os.path.join(out12_path,'train',x))
+    for x in test12_files:
+        shutil.copy(os.path.join(wavs_path,x), os.path.join(out12_path,'test',x))
+
+    # Cut clips for Trawler_28
+    name = 'Trawler_28__19_07_13_NuevoRiaAldan.wav'
+    waveform, sample_rate = torchaudio.load(os.path.join(wavs_path,name))
+    # print(f"数据类型: {waveform.dtype}") # torch.float32
+    # print(f'waveform: {waveform.size()}, sample_rate: {sample_rate}') # waveform.size() 显示的是张量维度 [通道数, 采样点数]
+    duration = waveform.size(1) / sample_rate
+    start_time = 125
+
+    part1 = waveform[:, 15 * sample_rate:start_time * sample_rate]
+    part2 = waveform[:, start_time * sample_rate:]
+
+    # Save as WAV file
+    torchaudio.save(os.path.join(out12_path,'train',name.replace('.wav','_train.wav')), part1, sample_rate, bits_per_sample=16)
+    torchaudio.save(os.path.join(out12_path,'test',name.replace('.wav','_test.wav')), part2, sample_rate, bits_per_sample=16)
