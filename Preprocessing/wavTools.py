@@ -100,7 +100,6 @@ def get_minute_part_wav(main_wav_path, start_time, end_time, part_wav_path):
     :param part_wav_path:  截取后的音频路径
     :return:
     '''
-
     start_time = (int(start_time.split(':')[0])*60+int(start_time.split(':')[1]))*1000
     end_time = (int(end_time.split(':')[0])*60+int(end_time.split(':')[1]))*1000
 
