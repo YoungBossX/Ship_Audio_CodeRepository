@@ -105,6 +105,10 @@ print(f"sampling_rate: {sampling_rate_2}")
 # plt.show()
 
 # 频域表示：STFT
+# n_fft = 512
+# win_length = 512
+# hop_length = 256
+
 # frame = 25 # 帧长
 # hop_length = 10 # 帧移
 # win_length = int(frame * sampling_rate_2 / 1000)
@@ -250,6 +254,19 @@ print(f"sampling_rate: {sampling_rate_2}")
 # fig.colorbar(img_2, ax=ax[1])
 # fig.colorbar(img_3, ax=ax[2])
 # plt.show()
+
+# CQT特征
+hop_time = 25 # 帧移
+hop_length = int(hop_time  * sampling_rate_2 / 1000) # hop_length = 400
+n_bins = 84
+cqt = librosa.cqt(y=array_2, sr=sampling_rate_2, hop_length=hop_length, n_bins=n_bins, bins_per_octave=12)
+cqt_dB = librosa.amplitude_to_db(np.abs(cqt), ref=np.max)
+fig = plt.figure()
+img = librosa.display.specshow(cqt_dB, sr=sampling_rate_2, x_axis='time', y_axis='cqt_hz', bins_per_octave=12)
+fig.colorbar(img, format='%+2.0f dB')
+plt.title("CQT Spectrogram")
+plt.tight_layout()
+plt.show()
 
 # 特征拼接与差分
 # frame = 25 # 帧长
