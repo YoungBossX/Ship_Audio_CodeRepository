@@ -128,14 +128,14 @@ def train_test_split_by_class(base_dir, class_names, test_ratio=0.2):
 
         print(f"类别 {class_name}: {len(train_files)} 训练样本, {len(test_files)} 测试样本")
 
-def class5_split(wavs, output_base_path):
+def class5_split(wavs_path, output_base_path):
     # 定义5个类别及其对应的船舶类型
     class_definitions = {
-        'A': ['Fishing', 'Trawler', 'Mussel', 'Tugboat', 'Dredger'],
-        'B': ['Motorboat', 'Pilot', 'Sailboat'],
+        'A': ['Fish boat', 'Trawler', 'Mussel boat', 'Tugboat', 'Dredger'],
+        'B': ['Motorboat', 'Pilot ship', 'Sailboat'],
         'C': ['Passenger', 'Ferry'],
-        'D': ['OceanLiner', 'Ro-ro'],
-        'E': ['Background', 'Noise']
+        'D': ['Ocean liner', 'RORO'],
+        'E': ['Natural ambient noise']
     }
     # 创建输出目录结构
     output_dir = os.path.join(output_base_path, 'shipsear_with_split-5class')
@@ -143,7 +143,6 @@ def class5_split(wavs, output_base_path):
         for class_name in class_definitions.keys():
             os.makedirs(os.path.join(output_dir, f'Class{class_name}'), exist_ok=True)
     # 获取所有音频文件
-    wavs = []
     if os.path.isdir(wavs_path):
         wavs = os.listdir(wavs_path)
     else:
@@ -156,16 +155,14 @@ def class5_split(wavs, output_base_path):
     for wav in wavs:
         if not wav.endswith('.wav'):
             continue
-
         # 提取船舶类型（文件名的第一部分）
         try:
             ship_type = wav.split('_')[0]
             assigned = False
-
             # 判断船舶类型属于哪个类别
             for class_name, ship_types in class_definitions.items():
-                for ship_pattern in ship_types:
-                    if ship_pattern.lower() in ship_type.lower():
+                for ship in ship_types:
+                    if ship.lower() in ship_type.lower():
                         # 复制文件到相应类别目录
                         shutil.copy(
                             os.path.join(wavs_path, wav),
@@ -179,11 +176,9 @@ def class5_split(wavs, output_base_path):
             if not assigned:
                 print(f"未分类: {wav} - 船舶类型 '{ship_type}' 不在定义的类别中")
                 unclassified += 1
-
         except Exception as e:
             print(f"处理 {wav} 时出错: {str(e)}")
             unclassified += 1
-
     # 输出分类统计信息
     print("\n分类完成！统计信息:")
     for class_name in class_definitions.keys():
@@ -236,11 +231,13 @@ if __name__ == '__main__':
     # output_directory = r"D:\数据集\ShipEar-Class"
     # rename_files_with_labels(audio_directory, labels_file, output_directory)
 
-    wavs_path = 'D:\数据集\ShipEar-Rename'
+    wavs_path = 'E:\数据集\ShipEar\ShipEar-Class'
     wavs = os.listdir(wavs_path)
 
     ###################### 5-class train-test-split ######################
-
+    # output_base_path = r'E:\数据集\ShipEar\ShipEar-train-test-split'
+    # output_dir = class5_split(wavs_path, output_base_path)
+    # print(f"5类别处理完成，输出目录: {output_dir}")
 
     ###################### 9-class train-test-split ######################
     # train9_files, test9_files = class9_split(wavs)
