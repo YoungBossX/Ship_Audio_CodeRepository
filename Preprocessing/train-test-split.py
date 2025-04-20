@@ -13,6 +13,7 @@ import os
 import shutil
 import pandas as pd
 import torchaudio
+from sklearn.model_selection import train_test_split
 
 def rename_files_with_labels(audio_dir, label_file, output_dir):
     """
@@ -76,6 +77,123 @@ def rename_files_with_labels(audio_dir, label_file, output_dir):
     print(f"处理完成!")
     print(f"已重命名: {renamed_count} 个文件")
     print(f"未找到标签: {not_found_count} 个文件")
+
+def train_test_split_by_class(base_dir, class_names, test_ratio=0.2):
+    """
+    对每个类别文件夹中的音频进行训练集和测试集的划分
+
+    参数:
+    base_dir: 包含分类后文件夹的基础目录
+    class_names: 类别名称列表
+    test_ratio: 测试集比例，默认0.2
+    """
+    # 创建训练集和测试集目录
+    train_dir = os.path.join(base_dir, 'train')
+    test_dir = os.path.join(base_dir, 'test')
+
+    if not os.path.exists(train_dir):
+        os.makedirs(train_dir, exist_ok=True)
+    if not os.path.exists(test_dir):
+        os.makedirs(test_dir, exist_ok=True)
+
+    # 对每个类别进行划分
+    for class_name in class_names:
+        class_dir = os.path.join(base_dir, f'Class{class_name}')
+        if not os.path.exists(class_dir):
+            print(f"警告: 类别目录 {class_dir} 不存在")
+            continue
+
+        # 获取该类别的所有音频文件
+        audio_files = [f for f in os.listdir(class_dir) if f.endswith('.wav')]
+
+        if not audio_files:
+            print(f"警告: 类别 {class_name} 中没有音频文件")
+            continue
+
+        # 划分训练集和测试集
+        train_files, test_files = train_test_split(audio_files, test_size=test_ratio, random_state=42)
+
+        # 复制文件到训练集和测试集目录
+        for file in train_files:
+            shutil.copy(
+                os.path.join(class_dir, file),
+                os.path.join(train_dir, f"Class{class_name}_{file}")
+            )
+
+        for file in test_files:
+            shutil.copy(
+                os.path.join(class_dir, file),
+                os.path.join(test_dir, f"Class{class_name}_{file}")
+            )
+
+        print(f"类别 {class_name}: {len(train_files)} 训练样本, {len(test_files)} 测试样本")
+
+def class5_split(wavs, output_base_path):
+    # 定义5个类别及其对应的船舶类型
+    class_definitions = {
+        'A': ['Fishing', 'Trawler', 'Mussel', 'Tugboat', 'Dredger'],
+        'B': ['Motorboat', 'Pilot', 'Sailboat'],
+        'C': ['Passenger', 'Ferry'],
+        'D': ['OceanLiner', 'Ro-ro'],
+        'E': ['Background', 'Noise']
+    }
+    # 创建输出目录结构
+    output_dir = os.path.join(output_base_path, 'shipsear_with_split-5class')
+    if not os.path.exists(output_dir):
+        for class_name in class_definitions.keys():
+            os.makedirs(os.path.join(output_dir, f'Class{class_name}'), exist_ok=True)
+    # 获取所有音频文件
+    wavs = []
+    if os.path.isdir(wavs_path):
+        wavs = os.listdir(wavs_path)
+    else:
+        print(f"错误: {wavs_path} 不是有效目录")
+        return
+    # 统计各类别文件数量
+    class_counts = {class_name: 0 for class_name in class_definitions.keys()}
+    unclassified = 0
+    # 分类文件
+    for wav in wavs:
+        if not wav.endswith('.wav'):
+            continue
+
+        # 提取船舶类型（文件名的第一部分）
+        try:
+            ship_type = wav.split('_')[0]
+            assigned = False
+
+            # 判断船舶类型属于哪个类别
+            for class_name, ship_types in class_definitions.items():
+                for ship_pattern in ship_types:
+                    if ship_pattern.lower() in ship_type.lower():
+                        # 复制文件到相应类别目录
+                        shutil.copy(
+                            os.path.join(wavs_path, wav),
+                            os.path.join(output_dir, f'Class{class_name}', wav)
+                        )
+                        class_counts[class_name] += 1
+                        assigned = True
+                        break
+                if assigned:
+                    break
+            if not assigned:
+                print(f"未分类: {wav} - 船舶类型 '{ship_type}' 不在定义的类别中")
+                unclassified += 1
+
+        except Exception as e:
+            print(f"处理 {wav} 时出错: {str(e)}")
+            unclassified += 1
+
+    # 输出分类统计信息
+    print("\n分类完成！统计信息:")
+    for class_name in class_definitions.keys():
+        print(f"Class {class_name}: {class_counts[class_name]} 个文件")
+    print(f"未分类: {unclassified} 个文件")
+
+    # 进一步对每个类别进行训练/测试集划分
+    train_test_split_by_class(output_dir, class_definitions.keys())
+
+    return output_dir
 
 def class9_split(wavs):
     train_files, test_files = [], []
